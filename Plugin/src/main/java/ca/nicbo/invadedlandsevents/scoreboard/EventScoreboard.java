@@ -2,9 +2,11 @@ package ca.nicbo.invadedlandsevents.scoreboard;
 
 import ca.nicbo.invadedlandsevents.api.util.Validate;
 import ca.nicbo.invadedlandsevents.util.StringUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -19,6 +21,7 @@ import org.bukkit.scoreboard.Team;
 public abstract class EventScoreboard {
     private static final String LINE = "&7&m--------------------";
     private static final String HEART = "❤";
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
 
     private final Player player;
     private final String title;
@@ -45,8 +48,7 @@ public abstract class EventScoreboard {
         registerObjective();
         this.lines = new EventScoreboardLine[0];
 
-        Objective health = scoreboard.registerNewObjective("ile_health", "health");
-        health.setDisplayName(ChatColor.RED + HEART);
+        Objective health = scoreboard.registerNewObjective("ile_health", Criteria.HEALTH, Component.text(HEART).color(net.kyori.adventure.text.format.NamedTextColor.RED));
         health.setDisplaySlot(DisplaySlot.BELOW_NAME);
     }
 
@@ -57,9 +59,9 @@ public abstract class EventScoreboard {
     }
 
     private void registerObjective() {
-        this.objective = scoreboard.registerNewObjective(name, "dummy");
+        Component displayName = LEGACY_SERIALIZER.deserialize(StringUtils.colour(title));
+        this.objective = scoreboard.registerNewObjective(name, Criteria.DUMMY, displayName);
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        this.objective.setDisplayName(StringUtils.colour(title));
     }
 
     private void resetScoreboard() {
@@ -91,8 +93,8 @@ public abstract class EventScoreboard {
     private void registerLine(EventScoreboardLine line) {
         Team team = scoreboard.registerNewTeam(line.getTeam());
         team.addEntry(line.getBase());
-        team.setPrefix(line.getPrefix());
-        team.setSuffix(line.getSuffix());
+        team.prefix(LEGACY_SERIALIZER.deserialize(line.getPrefix()));
+        team.suffix(LEGACY_SERIALIZER.deserialize(line.getSuffix()));
         objective.getScore(line.getBase()).setScore(line.getLineNumber());
     }
 
@@ -103,8 +105,8 @@ public abstract class EventScoreboard {
         for (EventScoreboardLine line : lines) {
             Team team = scoreboard.getTeam(line.getTeam());
             Validate.checkState(team != null, "%s is not on scoreboard", line.getTeam());
-            team.setPrefix(line.getPrefix());
-            team.setSuffix(line.getSuffix());
+            team.prefix(LEGACY_SERIALIZER.deserialize(line.getPrefix()));
+            team.suffix(LEGACY_SERIALIZER.deserialize(line.getSuffix()));
         }
     }
 

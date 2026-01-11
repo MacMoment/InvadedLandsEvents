@@ -55,7 +55,7 @@ public class InvadedLandsEventsPlugin extends JavaPlugin implements InvadedLands
         long startTime = System.currentTimeMillis();
         Logger logger = getLogger();
 
-        logger.info("Detected " + NMSVersion.getCurrentVersion() + " as the NMS version.");
+        logger.info("Detected " + NMSVersion.getCurrentVersion() + " as the Minecraft version.");
 
         PluginManager pluginManager = getServer().getPluginManager();
 
