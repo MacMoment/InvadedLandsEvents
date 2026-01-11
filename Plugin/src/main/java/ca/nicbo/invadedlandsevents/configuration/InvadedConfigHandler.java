@@ -81,15 +81,15 @@ public class InvadedConfigHandler extends InvadedConfigurationHandler implements
         defaultKitMap.put("brackets3v3.kit", bracketsKit);
 
         Kit kothLmsKit = new InvadedKit(Arrays.asList(
-                new ItemStackBuilder(Material.IRON_SWORD).addEnchant(Enchantment.DAMAGE_ALL, 1).build(),
+                new ItemStackBuilder(Material.IRON_SWORD).addEnchant(Enchantment.SHARPNESS, 1).build(),
                 new ItemStack(Material.BOW),
                 new ItemStack(Material.GOLDEN_APPLE, 10),
                 new ItemStack(Material.ARROW, 32)
         ), Arrays.asList(
-                new ItemStackBuilder(Material.IRON_BOOTS).addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build(),
-                new ItemStackBuilder(Material.IRON_LEGGINGS).addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build(),
-                new ItemStackBuilder(Material.IRON_CHESTPLATE).addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build(),
-                new ItemStackBuilder(Material.IRON_HELMET).addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build()
+                new ItemStackBuilder(Material.IRON_BOOTS).addEnchant(Enchantment.PROTECTION, 2).build(),
+                new ItemStackBuilder(Material.IRON_LEGGINGS).addEnchant(Enchantment.PROTECTION, 2).build(),
+                new ItemStackBuilder(Material.IRON_CHESTPLATE).addEnchant(Enchantment.PROTECTION, 2).build(),
+                new ItemStackBuilder(Material.IRON_HELMET).addEnchant(Enchantment.PROTECTION, 2).build()
         ));
 
         defaultKitMap.put("koth.kit", kothLmsKit);
@@ -118,7 +118,7 @@ public class InvadedConfigHandler extends InvadedConfigurationHandler implements
         defaultKitMap.put("rod.kit", rodKit);
 
         Kit spleefKit = new InvadedKit(Collections.singletonList(new ItemStackBuilder(CompatibleMaterial.DIAMOND_SHOVEL)
-                .addEnchant(Enchantment.DIG_SPEED, 5)
+                .addEnchant(Enchantment.EFFICIENCY, 5)
                 .build()));
 
         defaultKitMap.put("spleef.kit", spleefKit);
@@ -152,8 +152,8 @@ public class InvadedConfigHandler extends InvadedConfigurationHandler implements
         LeatherArmorMeta meta = (LeatherArmorMeta) helmet.getItemMeta();
         Validate.checkNotNull(meta);
         meta.setColor(color);
-        meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true);
-        meta.addEnchant(Enchantment.DURABILITY, 3, true);
+        meta.addEnchant(Enchantment.PROTECTION, 4, true);
+        meta.addEnchant(Enchantment.UNBREAKING, 3, true);
         helmet.setItemMeta(meta);
 
         return new InvadedKit(Arrays.asList(
