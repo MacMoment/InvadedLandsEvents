@@ -37,10 +37,11 @@ import ca.nicbo.invadedlandsevents.task.SyncedTask;
 import ca.nicbo.invadedlandsevents.util.CollectionUtils;
 import ca.nicbo.invadedlandsevents.util.ItemStackBuilder;
 import ca.nicbo.invadedlandsevents.util.SpigotUtils;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import ca.nicbo.invadedlandsevents.util.StringUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -62,7 +63,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -507,9 +508,8 @@ public abstract class InvadedEvent implements Event, Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    @SuppressWarnings("deprecation") // EntityPickupItemEvent not available in 1.8
-    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
-        if (isPlayerParticipating(event.getPlayer())) {
+    public void onEntityPickupItem(EntityPickupItemEvent event) {
+        if (event.getEntity() instanceof Player player && isPlayerParticipating(player)) {
             event.setCancelled(true);
         }
     }
@@ -627,9 +627,10 @@ public abstract class InvadedEvent implements Event, Listener {
     private class EventCountdownTask extends SyncedTask {
         private static final long DELAY = 0;
         private static final long PERIOD = 20;
+        private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
 
         private final String hostMessage;
-        private final TextComponent joinMessage;
+        private final Component hoverText;
         private final int initialCountdown;
 
         private int countdown;
@@ -640,11 +641,7 @@ public abstract class InvadedEvent implements Event, Listener {
                     .replace("{player}", hostName)
                     .replace("{event}", getDisplayName());
 
-            this.joinMessage = new TextComponent();
-
-            // noinspection deprecation (compatibility)
-            joinMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(Message.CLICK_TO_JOIN.get().replace("{event}", getDisplayName())).create()));
-            joinMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/event join"));
+            this.hoverText = LEGACY_SERIALIZER.deserialize(StringUtils.colour(Message.CLICK_TO_JOIN.get().replace("{event}", getDisplayName())));
 
             this.initialCountdown = initialCountdown;
             this.countdown = initialCountdown;
@@ -671,10 +668,12 @@ public abstract class InvadedEvent implements Event, Listener {
             }
 
             if (countdown % 15 == 0 || (countdown <= 5 && countdown >= 1) || countdown == initialCountdown) {
-                joinMessage.setText(Message.STARTING_IN.get().replace("{seconds}", String.valueOf(countdown)));
+                Component joinMessage = LEGACY_SERIALIZER.deserialize(StringUtils.colour(Message.STARTING_IN.get().replace("{seconds}", String.valueOf(countdown))))
+                        .hoverEvent(HoverEvent.showText(hoverText))
+                        .clickEvent(ClickEvent.runCommand("/event join"));
                 for (Player player : plugin.getServer().getOnlinePlayers()) {
                     player.sendMessage(hostMessage);
-                    player.spigot().sendMessage(joinMessage);
+                    player.sendMessage(joinMessage);
                 }
             }
 

@@ -4,7 +4,8 @@ version: ${project.version}
 description: A replica of the invadedlands.net event plugin
 author: Nicbo
 website: https://www.spigotmc.org/resources/invadedlandsevents.83772/
-api-version: 1.13
+api-version: "1.21"
+folia-supported: false
 
 commands:
   event:

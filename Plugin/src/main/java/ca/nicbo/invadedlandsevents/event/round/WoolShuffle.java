@@ -3,7 +3,6 @@ package ca.nicbo.invadedlandsevents.event.round;
 import ca.nicbo.invadedlandsevents.InvadedLandsEventsPlugin;
 import ca.nicbo.invadedlandsevents.api.event.EventType;
 import ca.nicbo.invadedlandsevents.api.event.event.EventPostStartEvent;
-import ca.nicbo.invadedlandsevents.compatibility.Colour;
 import ca.nicbo.invadedlandsevents.compatibility.CompatibleMaterial;
 import ca.nicbo.invadedlandsevents.configuration.ListMessage;
 import ca.nicbo.invadedlandsevents.configuration.Message;
@@ -16,6 +15,7 @@ import ca.nicbo.invadedlandsevents.util.RandomWeightedCollection;
 import ca.nicbo.invadedlandsevents.util.SpigotUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -53,17 +53,17 @@ public class WoolShuffle extends RoundEvent {
                 .add(() -> new PotionEffect(PotionEffectType.SPEED, getTimer() * 20, 0, true, false), 20)
                 .add(() -> new PotionEffect(PotionEffectType.SPEED, getTimer() * 20, 1, true, false), 20)
                 .add(() -> new PotionEffect(PotionEffectType.SPEED, getTimer() * 20, 3, true, false), 10)
-                .add(() -> new PotionEffect(PotionEffectType.SLOW, getTimer() * 20, 0, true, false), 10);
+                .add(() -> new PotionEffect(PotionEffectType.SLOWNESS, getTimer() * 20, 0, true, false), 10);
 
         this.wools = CollectionUtils.unmodifiableList(
-                new Wool(ChatColor.GOLD + "Orange", CompatibleMaterial.ORANGE_WOOL.createItemStack(), Colour.ORANGE),
-                new Wool(ChatColor.YELLOW + "Yellow", CompatibleMaterial.YELLOW_WOOL.createItemStack(), Colour.YELLOW),
-                new Wool(ChatColor.GREEN + "Lime", CompatibleMaterial.LIME_WOOL.createItemStack(), Colour.LIME),
-                new Wool(ChatColor.LIGHT_PURPLE + "Pink", CompatibleMaterial.PINK_WOOL.createItemStack(), Colour.PINK),
-                new Wool(ChatColor.DARK_AQUA + "Cyan", CompatibleMaterial.CYAN_WOOL.createItemStack(), Colour.CYAN),
-                new Wool(ChatColor.DARK_PURPLE + "Purple", CompatibleMaterial.PURPLE_WOOL.createItemStack(), Colour.PURPLE),
-                new Wool(ChatColor.BLUE + "Blue", CompatibleMaterial.BLUE_WOOL.createItemStack(), Colour.BLUE),
-                new Wool(ChatColor.RED + "Red", CompatibleMaterial.RED_WOOL.createItemStack(), Colour.RED)
+                new Wool(ChatColor.GOLD + "Orange", CompatibleMaterial.ORANGE_WOOL.createItemStack(), Material.ORANGE_WOOL),
+                new Wool(ChatColor.YELLOW + "Yellow", CompatibleMaterial.YELLOW_WOOL.createItemStack(), Material.YELLOW_WOOL),
+                new Wool(ChatColor.GREEN + "Lime", CompatibleMaterial.LIME_WOOL.createItemStack(), Material.LIME_WOOL),
+                new Wool(ChatColor.LIGHT_PURPLE + "Pink", CompatibleMaterial.PINK_WOOL.createItemStack(), Material.PINK_WOOL),
+                new Wool(ChatColor.DARK_AQUA + "Cyan", CompatibleMaterial.CYAN_WOOL.createItemStack(), Material.CYAN_WOOL),
+                new Wool(ChatColor.DARK_PURPLE + "Purple", CompatibleMaterial.PURPLE_WOOL.createItemStack(), Material.PURPLE_WOOL),
+                new Wool(ChatColor.BLUE + "Blue", CompatibleMaterial.BLUE_WOOL.createItemStack(), Material.BLUE_WOOL),
+                new Wool(ChatColor.RED + "Red", CompatibleMaterial.RED_WOOL.createItemStack(), Material.RED_WOOL)
         );
 
         this.startLocation = getEventConfig().getLocation("start");
@@ -162,9 +162,8 @@ public class WoolShuffle extends RoundEvent {
         return isBlockCurrentWool(block) || isBlockCurrentWool(blockUnder);
     }
 
-    @SuppressWarnings("deprecation") // Compatibility
     private boolean isBlockCurrentWool(Block block) {
-        return currentWool.getColour().getData() == block.getData();
+        return currentWool.getMaterial() == block.getType();
     }
 
     private class WoolShuffleScoreboard extends EventScoreboard {
@@ -201,12 +200,12 @@ public class WoolShuffle extends RoundEvent {
     public static class Wool {
         private final String name;
         private final ItemStack itemStack;
-        private final Colour colour;
+        private final Material material;
 
-        public Wool(String name, ItemStack itemStack, Colour colour) {
+        public Wool(String name, ItemStack itemStack, Material material) {
             this.name = name;
             this.itemStack = itemStack;
-            this.colour = colour;
+            this.material = material;
         }
 
         public String getName() {
@@ -217,8 +216,8 @@ public class WoolShuffle extends RoundEvent {
             return itemStack.clone();
         }
 
-        public Colour getColour() {
-            return colour;
+        public Material getMaterial() {
+            return material;
         }
     }
 }

@@ -1,46 +1,74 @@
 package ca.nicbo.invadedlandsevents.compatibility;
 
-import ca.nicbo.invadedlandsevents.exception.UnsupportedVersionException;
 import org.bukkit.Bukkit;
 
 /**
- * The different supported NMS versions.
+ * Version detection for Minecraft server.
+ * <p>
+ * Since Paper 1.20.5+, NMS package versioning was removed.
+ * This class now detects the Minecraft version from the server.
  *
  * @author Nicbo
  */
-public enum NMSVersion {
-    v1_8_R1, v1_8_R2, v1_8_R3,
-    v1_9_R1, v1_9_R2,
-    v1_10_R1,
-    v1_11_R1,
-    v1_12_R1,
-    v1_13_R1, v1_13_R2,
-    v1_14_R1,
-    v1_15_R1,
-    v1_16_R1, v1_16_R2, v1_16_R3,
-    v1_17_R1,
-    v1_18_R1, v1_18_R2;
-
-    private static final NMSVersion CURRENT_VERSION;
+public final class NMSVersion {
+    private static final String MINECRAFT_VERSION;
+    private static final int MAJOR_VERSION;
+    private static final int MINOR_VERSION;
 
     static {
-        String packageVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        try {
-            CURRENT_VERSION = NMSVersion.valueOf(packageVersion);
-        } catch (IllegalArgumentException e) {
-            throw new UnsupportedVersionException("unsupported NMS version: " + packageVersion, e);
-        }
+        MINECRAFT_VERSION = Bukkit.getMinecraftVersion();
+        String[] versionParts = MINECRAFT_VERSION.split("\\.");
+        MAJOR_VERSION = versionParts.length > 0 ? Integer.parseInt(versionParts[0]) : 1;
+        MINOR_VERSION = versionParts.length > 1 ? Integer.parseInt(versionParts[1]) : 0;
     }
 
-    public boolean isPreCombatUpdate() {
-        return compareTo(v1_9_R1) < 0;
+    private NMSVersion() {
     }
 
-    public boolean isLegacy() {
-        return compareTo(v1_13_R1) < 0;
+    /**
+     * Returns the current Minecraft version string.
+     *
+     * @return the Minecraft version (e.g., "1.21.1")
+     */
+    public static String getCurrentVersion() {
+        return MINECRAFT_VERSION;
     }
 
-    public static NMSVersion getCurrentVersion() {
-        return CURRENT_VERSION;
+    /**
+     * Returns the major version number.
+     *
+     * @return the major version (e.g., 1 for "1.21.1")
+     */
+    public static int getMajorVersion() {
+        return MAJOR_VERSION;
+    }
+
+    /**
+     * Returns the minor version number.
+     *
+     * @return the minor version (e.g., 21 for "1.21.1")
+     */
+    public static int getMinorVersion() {
+        return MINOR_VERSION;
+    }
+
+    /**
+     * Checks if the server is running a version before the combat update (1.9).
+     * Always returns false for Paper 1.21+.
+     *
+     * @return false, as 1.21 is post-combat update
+     */
+    public static boolean isPreCombatUpdate() {
+        return false;
+    }
+
+    /**
+     * Checks if the server is running a legacy version (before 1.13).
+     * Always returns false for Paper 1.21+.
+     *
+     * @return false, as 1.21 is post-flattening
+     */
+    public static boolean isLegacy() {
+        return false;
     }
 }

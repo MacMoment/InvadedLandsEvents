@@ -2,7 +2,6 @@ package ca.nicbo.invadedlandsevents.kit;
 
 import ca.nicbo.invadedlandsevents.api.kit.Kit;
 import ca.nicbo.invadedlandsevents.api.util.Validate;
-import ca.nicbo.invadedlandsevents.compatibility.NMSVersion;
 import ca.nicbo.invadedlandsevents.util.SpigotUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -53,16 +52,11 @@ public class InvadedKit implements Kit {
         Validate.checkArgumentNotNull(player, "player");
 
         PlayerInventory inventory = player.getInventory();
-        if (NMSVersion.getCurrentVersion().isPreCombatUpdate()) {
-            inventory.setContents(items.toArray(EMPTY_ITEM_STACK_ARRAY));
-            inventory.setArmorContents(armour.toArray(EMPTY_ITEM_STACK_ARRAY));
-        } else {
-            List<ItemStack> contents = new ArrayList<>();
-            contents.addAll(items);
-            contents.addAll(armour);
-            contents.add(offhand);
-            inventory.setContents(contents.toArray(EMPTY_ITEM_STACK_ARRAY));
-        }
+        List<ItemStack> contents = new ArrayList<>();
+        contents.addAll(items);
+        contents.addAll(armour);
+        contents.add(offhand);
+        inventory.setContents(contents.toArray(EMPTY_ITEM_STACK_ARRAY));
 
         player.updateInventory();
     }
