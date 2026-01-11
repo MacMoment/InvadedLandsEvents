@@ -18,8 +18,8 @@ public final class NMSVersion {
     static {
         MINECRAFT_VERSION = Bukkit.getMinecraftVersion();
         String[] versionParts = MINECRAFT_VERSION.split("\\.");
-        MAJOR_VERSION = Integer.parseInt(versionParts[0]);
-        MINOR_VERSION = Integer.parseInt(versionParts[1]);
+        MAJOR_VERSION = versionParts.length > 0 ? Integer.parseInt(versionParts[0]) : 1;
+        MINOR_VERSION = versionParts.length > 1 ? Integer.parseInt(versionParts[1]) : 0;
     }
 
     private NMSVersion() {
